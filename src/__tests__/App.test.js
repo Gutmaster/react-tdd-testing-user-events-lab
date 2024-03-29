@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event'
 
 import App from "../App";
 
@@ -67,25 +68,67 @@ test("displays the correct links", () => {
 // Newsletter Form - Initial State
 test("the form includes text inputs for name and email address", () => {
   // your test code here
+  render(<App/>)
+
+  expect(screen.getByPlaceholderText(/name/i)).toBeInTheDocument()
+  expect(screen.getByPlaceholderText(/email address/i)).toBeInTheDocument()
 });
 
 test("the form includes three checkboxes to select areas of interest", () => {
-  // your test code here
+  render(<App />);
+
+  expect(screen.getByRole("checkbox", { name: /coding/i })).toBeInTheDocument()
+  expect(screen.getByRole("checkbox", { name: /music/i })).toBeInTheDocument()
+  expect(screen.getByRole("checkbox", { name: /gaming/i })).toBeInTheDocument()
 });
 
 test("the checkboxes are initially unchecked", () => {
-  // your test code here
+  render(<App />);
+
+  expect(screen.getByRole("checkbox", { name: /coding/i })).not.toBeChecked()
+  expect(screen.getByRole("checkbox", { name: /music/i })).not.toBeChecked()
+  expect(screen.getByRole("checkbox", { name: /gaming/i })).not.toBeChecked()
 });
 
 // Newsletter Form - Adding Responses
 test("the page shows information the user types into the name and email address form fields", () => {
-  // your test code here
+  render(<App />);
+
+  const email = screen.getByLabelText(/email/i);
+  userEvent.type(email, "buglover@chitinmail.web");
+  expect(email).toHaveValue("buglover@chitinmail.web");
+
+  const name = screen.getByLabelText(/name/i);
+  userEvent.type(name, "Daniel the Spaniel");
+  expect(name).toHaveValue("Daniel the Spaniel");
 });
 
 test("checked status of checkboxes changes when user clicks them", () => {
   // your test code here
+  render(<App/>)
+  
+  const coding = screen.getByLabelText(/coding/i)
+  userEvent.click(coding)
+  expect(coding).toBeChecked()
+
+  const music = screen.getByLabelText(/music/i)
+  userEvent.click(music)
+  expect(music).toBeChecked()
+
+  const gaming = screen.getByLabelText(/gaming/i)
+  userEvent.click(gaming)
+  expect(gaming).toBeChecked()
+
+  userEvent.click(gaming)
+  expect(gaming).not.toBeChecked()
 });
 
 test("a message is displayed when the user clicks the Submit button", () => {
   // your test code here
+  render(<App/>)
+  
+  const submit = screen.getByRole('button', {name: /submit/i})
+  expect(submit).toBeInTheDocument()
+  userEvent.click(submit)
+  expect(screen.getByText(/subscribed!/i)).toBeInTheDocument()
 });
